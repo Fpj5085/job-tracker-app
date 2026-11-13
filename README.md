@@ -207,6 +207,22 @@ Contributions are welcome!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+## 二次开发说明（Fork 注记）
+
+本节由二次开发团队增补，用于区分上游原有功能与后续新增贡献。上游代码版权归 Nadav Ramon 所有，项目继续遵循 MIT License（见 LICENSE 文件）。
+
+### 上游原有功能（本轮未改动）
+
+应用追踪仪表盘、AI 岗位抽取、门户凭据保险箱（AES-256-GCM）、JWT 认证、搜索/过滤/排序、明暗主题，以及 specs/0001-refresh-token-hardening 已完成的 refresh-token 加固。
+
+### 本轮贡献（P0 基线验证，2026-11-14）
+
+仅文档新增，无代码改动：本 README 分节与 HANDOFF.md。基线验证结论：前端 npm run build / npm test 全绿（375 用例），后端 mvnw test BUILD SUCCESS（191 用例，1 跳过）。环境排障与 P1 改造方案见 HANDOFF.md。
+
+### 后续计划（P1，方案待评审）
+
+面试管理、Offer 比较、HR 沟通记录、AI 岗位匹配中文化。涉及代码改动时将在独立分支进行并保留上游提交历史。
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
