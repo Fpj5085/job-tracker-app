@@ -63,3 +63,61 @@
 ## Git 可追溯性
 
 本轮代码零改动。未启动 8081 端口服务，未创建 jt-* 数据库容器。本文件与 README 分节见对应提交；package-lock.json 曾被强制安装意外改动，已还原。
+
+---
+
+# A2 — P1 开发：面试管理 + HR 沟通记录 + Offer 薪酬比较（2026-11-14）
+
+## 新增清单（文件路径）
+
+### 后端（包根 com.nadavramon.job_tracker）
+
+- 实体：entity/Interview.java、entity/Communication.java、entity/Offer.java（均继承 BaseEntity 审计 + deletedAt 软删，@SQLRestriction 过滤软删行）
+- 枚举：enums/InterviewStage、InterviewMode、InterviewResult、CommunicationChannel、CommunicationDirection、Currency
+- Repository：repository/InterviewRepository.java、CommunicationRepository.java、OfferRepository.java
+- Service：service/InterviewService.java（读写事务边界 @Transactional / readOnly）、service/CommunicationService.java、service/OfferService.java（normalizedAnnualPackage = (base×12+bonus+equity)×汇率，汇率表内置 application.properties，不调用外部 API）
+- Controller：controller/InterviewController.java（/applications/{id}/interviews CRUD）、controller/InterviewReminderController.java（GET /interviews/upcoming?hours=24，浏览器端轮询用，无消息队列）、controller/CommunicationController.java、controller/OfferController.java、controller/OfferComparisonController.java（GET /offers/compare）
+- DTO：dto/Interview*、Communication*、Offer*（JSR 380 校验：@NotNull/@NotBlank/@Size/@DecimalMin/@Min）
+- 配置：application.properties 新增 offer.base-currency 与 offer.currency-rate.USD/CNY/EUR（可用环境变量覆盖）
+- 等价迁移脚本：backend/src/main/resources/db/migration/V2__add_interviews.sql、V3__add_communications.sql、V4__add_offers.sql（项目沿用 ddl-auto=update，脚本作为等价迁移记录，未引入 Flyway 运行时）
+
+### 前端
+
+- 类型：types/index.ts 新增 Interview/Communication/Offer/OfferComparison 等类型
+- 服务：lib/interviewService.ts、lib/communicationService.ts、lib/offerService.ts
+- 详情页：app/(app)/applications/[id]/page.tsx（三标签：面试时间线 / 沟通记录 / Offer），组件 components/detail/InterviewTimeline.tsx、CommunicationList.tsx（next_action_at 到期置顶排序）、OfferPanel.tsx
+- 对比页：app/(app)/offers/page.tsx（双列对比 + 三项权重可调评分：薪资/长期激励/假期）
+- 提醒：components/dashboard/UpcomingInterviewBanner.tsx（每 5 分钟轮询 /interviews/upcoming?hours=24，仪表盘顶部横幅），已接入 dashboard/page.tsx
+- 导航：components/layout/navItems.ts 新增 Offers 菜单；ApplicationCard 公司名称改为详情页链接；components/ui/Input.tsx type 联合扩展 number/datetime-local
+
+## 测试清单与真实结果
+
+- 单测（Mockito）：InterviewServiceTest（8 用例）、CommunicationServiceTest（9）、OfferServiceTest（8，含归一化数学与币种换算）——覆盖创建默认 PENDING、软删、404（应用不存在）、403（越权 ResourceOwnershipException）
+- IT（Testcontainers postgres:17 + MockMvc）：service/A2P1ModulesIT.java（4 用例）——完整 CRUD、越权 403、未认证 401、JSR 380 400、upcoming 提醒窗口、/offers/compare 排序与跨用户隔离
+- 真实结果：mvnw -B test → BUILD SUCCESS，Tests run: 214, Failures: 0, Errors: 0, Skipped: 1（exit 0，日志 backend/build-a2-test.log）；mvnw -B verify → BUILD SUCCESS，failsafe Tests run: 8, Failures: 0, Errors: 0（exit 0，日志 backend/build-a2-verify.log）
+- 前端：npm run build → exit 0（11 条路由）；npm test → exit 0，42 套件 / 383 用例全绿（新增 a2Services.test.ts 8 用例），日志 frontend-build-a2.log / frontend-test-a2.log
+- 排障记录：Boot 4 下 @AutoConfigureMockMvc 位于 org.springframework.boot.webmvc.test.autoconfigure；TestRestTemplate 包路径不可用，改用 MockMvc + jwt Cookie 直注；Mockito 严格模式要求删除 404 用例中不必要的 getCurrentUser 打桩
+
+## 端到端演示（jt-postgres@55432 + 后端 8081 + 前端 dev 3000，全部本地）
+
+1. docker run --name jt-postgres -e POSTGRES_USER=jt -e POSTGRES_PASSWORD=jt -e POSTGRES_DB=job_tracker -p 55432:5432 postgres:17
+2. 后端：DB_URL=jdbc:postgresql://localhost:55432/job_tracker + JWT/ENCRYPTION secret，SERVER_PORT=8081，mvnw spring-boot:run
+3. 前端：NEXT_PUBLIC_API_URL=http://localhost:8081，npm run dev
+4. 演示账号（虚构）：a2demoalice / Password123!；流程：注册两个账号 → a2demoalice 创建申请「星辰科技 · Java 后端工程师」→ 添加终面（当日 19:00，ONLINE）→ 添加微信沟通（next_action：确认入职意向）→ 录入两个 Offer（CNY 35000×12+80000+60000=560,000；USD 8000×12+10000 → ×7.25=768,500）→ /offers 页显示 🥇/🥈 双列对比与权重滑杆
+5. 验证点（真实输出）：COMPARE 返回排序 [768500.00 (USD), 560000.00 (CNY)]，baseCurrency=CNY，rates {USD:7.25, CNY:1.0, EUR:7.85}；CROSS_USER_STATUS: 403（bob 访问 alice 的 interviews）；UPCOMING 返回 1 条 PENDING 面试；仪表盘显示「⏰ 24 小时内有 1 场面试」横幅
+6. 截图：对话内已嵌入 /offers 对比页与详情页面试时间线两张截图（浏览器演示时捕获）；截图文件未落盘为限制项
+
+## Backlog 登记（本轮禁止实现，仅登记）
+
+- AI 岗位匹配中文化（jieba-wasm 中文分词、中文 JD prompt、salaryRange 币种枚举、中英 i18n 字典）——维持 A1 HANDOFF 中的方案原样，待后续任务单批准
+- Recharts 雷达图（/offers 页当前为双列对比 + 评分，未加雷达图，属视觉增强）
+
+## 提交清单
+
+- 7061c06 A2: add interviews, communications and offers backend modules with tests and equivalent migrations
+- 249fd53 A2: add application detail page with interview timeline and communication log, offers comparison page and 24h interview reminder
+- (docs commit) A2: handoff A2 section and README fork notes update
+
+## 阻塞项
+
+- 无硬阻塞。注：演示服务（jt-postgres 容器、后端 8081、前端 dev）在任务结束后停止/移除；截图仅存在于会话未落盘
