@@ -94,3 +94,57 @@ export interface StatsResponse {
     monthlyApplications: MonthlyCount[];
     responseRate: number;
 }
+
+// ===== A2: Interview / Communication / Offer types =====
+export type InterviewStage = 'HR_SCREEN' | 'TECHNICAL' | 'SYSTEM_DESIGN' | 'FINAL' | 'CROSS';
+export type InterviewMode = 'ONLINE' | 'ONSITE' | 'PHONE';
+export type InterviewResult = 'PENDING' | 'PASS' | 'FAIL' | 'NO_SHOW';
+export type CommunicationChannel = 'EMAIL' | 'PHONE' | 'PORTAL' | 'WECHAT' | 'LINKEDIN';
+export type CommunicationDirection = 'IN' | 'OUT';
+export type Currency = 'USD' | 'CNY' | 'EUR';
+export interface Interview {
+    id: string;
+    applicationId: string;
+    stage: InterviewStage;
+    scheduledAt: string;
+    timezone: string | null;
+    mode: InterviewMode;
+    interviewerNotes: string | null;
+    feedback: string | null;
+    result: InterviewResult;
+}
+export interface Communication {
+    id: string;
+    applicationId: string;
+    channel: CommunicationChannel;
+    direction: CommunicationDirection;
+    occurredAt: string;
+    summary: string;
+    nextAction: string | null;
+    nextActionAt: string | null;
+}
+export interface Offer {
+    id: string;
+    applicationId: string;
+    companyName: string;
+    jobRole: string;
+    baseSalary: number;
+    bonus: number | null;
+    equity: number | null;
+    currency: Currency;
+    location: string;
+    remotePolicy: string | null;
+    insurance: string | null;
+    ptoDays: number | null;
+    startDate: string | null;
+    notes: string | null;
+}
+export interface OfferComparisonItem {
+    offer: Offer;
+    normalizedAnnualPackage: number;
+}
+export interface OfferComparisonResponse {
+    baseCurrency: Currency;
+    rates: Record<Currency, number>;
+    items: OfferComparisonItem[];
+}

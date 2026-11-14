@@ -3,7 +3,7 @@
 import { InputHTMLAttributes, useId, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-type InputType = 'text' | 'email' | 'password' | 'url';
+type InputType = 'text' | 'email' | 'password' | 'url' | 'number' | 'datetime-local';
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
     type?: InputType;

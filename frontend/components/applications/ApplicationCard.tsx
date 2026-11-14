@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Application } from '@/types';
 import { JOB_TYPE_LABELS } from '@/lib/constants';
 import { StatusBadge } from '@/components/ui/Badge';
@@ -21,7 +22,7 @@ export default function ApplicationCard({ application, onEdit, onDelete }: Props
                 <div className="min-w-0 flex-1">
                     <p className="font-semibold text-(--foreground) flex items-center gap-1.5 truncate">
                         <StatusHint status={status} appliedDate={appliedDate} />
-                        <span className="truncate">{companyName}</span>
+                        <Link href={`/applications/${application.id}`} className="truncate hover:underline">{companyName}</Link>
                     </p>
                     <p className="mt-0.5 text-sm text-(--muted-foreground) truncate">{jobRole}</p>
                 </div>
