@@ -34,6 +34,8 @@ public class AiExtractionService {
             - If a field cannot be determined, set it to null.
             - For jobType: full-time/permanent → FULL_TIME, part-time → PART_TIME, contract/freelance → CONTRACT, internship/co-op → INTERNSHIP.
             - For websiteLink: extract the careers/application URL if present, otherwise null.
+            - Chinese job postings (中文 JD) are fully supported: responsibilities = 职责/岗位职责/工作职责 items; requirements = 要求/任职要求/岗位要求 items.
+            - Salary ranges (薪资范围/薪资: X-Y K/万/元) must map to salaryMin/salaryMax as monthly numbers in the original currency, and salaryCurrency to one of CNY/USD/EUR (薪资单位 元/人民币→CNY, 美元/USD→USD, 欧元/EUR→EUR). Mixed Chinese/English text is tolerated.
             - For location: include city and state/country. If remote, include "Remote".""";
 
     private static final Map<String, Object> TOOL_SCHEMA = Map.of(
@@ -189,6 +191,14 @@ public class AiExtractionService {
             throw new AiServiceException(HttpStatus.BAD_GATEWAY,
                     "Failed to connect to AI service.");
         }
+    }
+
+    private List<String> toList(JsonNode node) {
+        List<String> values = new java.util.ArrayList<>();
+        if (node.isArray()) {
+            node.forEach(item -> values.add(item.asText()));
+        }
+        return values;
     }
 
     private AiExtractResponse parseAnthropicResponse(String responseJson) {

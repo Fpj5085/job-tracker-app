@@ -5,6 +5,7 @@ import { getStats } from '@/lib/applicationService';
 import { StatsResponse } from '@/types';
 import useAuthGuard from '@/hooks/useAuthGuard';
 import Spinner from '@/components/ui/Spinner';
+import JobMatchCard from '@/components/dashboard/JobMatchCard';
 import UpcomingInterviewBanner from '@/components/dashboard/UpcomingInterviewBanner';
 import StatsBar from '@/components/dashboard/StatsBar';
 import ApplicationsChart from '@/components/dashboard/ApplicationsChart';
@@ -74,6 +75,7 @@ export default function DashboardPage() {
           {stats && (
             <>
               <UpcomingInterviewBanner />
+            <JobMatchCard />
             <StatsBar stats={stats} />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2">

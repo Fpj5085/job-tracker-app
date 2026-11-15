@@ -11,6 +11,7 @@ jest.mock('next/navigation', () => ({
 
 jest.mock('@/lib/applicationService', () => ({
   getStats: jest.fn(),
+  getApplications: jest.fn().mockResolvedValue({ content: [] }),
 }));
 
 jest.mock('@/lib/auth', () => ({

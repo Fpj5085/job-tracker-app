@@ -148,3 +148,15 @@ export interface OfferComparisonResponse {
     rates: Record<Currency, number>;
     items: OfferComparisonItem[];
 }
+
+export interface JobMatchRequest {
+    jdText: string;
+    extraKeywords?: string[];
+}
+export interface JobMatchResponse {
+    score: number;
+    matchedWeight: number;
+    totalWeight: number;
+    matchedKeywords: string[];
+    missingKeywords: string[];
+}

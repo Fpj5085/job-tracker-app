@@ -163,3 +163,38 @@
 
 - 镜像瘦身：backend 运行镜像 577MB（jre），可换 alpine/distroless；frontend 构建上下文含 node_modules（因 vendor 二进制方案），可改为两阶段产物拷贝以减小上下文。
 - CI 中加 docker compose config 校验与 .env.example 完整性检查。
+---
+
+# A4 — P3 收尾与价值强化（2026-11-15）
+
+## 完成项
+
+1. **AI 岗位匹配中文化（Backlog 转正）**：
+   - AI 抽取中文化：SYSTEM_PROMPT 增加中文 JD 规则（职责/要求/薪资范围/工作地点中英混合容错，K/万/元→CNY 等币种映射）；TOOL_SCHEMA 增加 responsibilities/requirements/salaryMin/salaryMax/salaryCurrency（enum CNY/USD/EUR）；AiExtractResponse 增加对应字段与解析（toList helper）。本机无 Anthropic Key，测试保持 mock（AiControllerTest 6/6 通过）。
+   - 岗位匹配评分：service/JobMatchService.java（纯 Java，关键词加权：职位40/地点25/公司15/类型10/附加关键词每个10上限40，contains 大小写不敏感兼容中英文）+ POST /applications/{id}/match 端点（JobMatchController，复用用户数据隔离模式）+ JobMatchRequest/Response DTO。
+   - 前端：lib/i18n.ts 中英双语字典（默认 zh-CN，可 setLocale 切换）；lib/jobMatchService.ts；components/dashboard/JobMatchCard.tsx 仪表盘匹配卡片（选申请 + 粘贴 JD + 附加关键词 → 评分/命中/未命中 + 权重说明），已接入 dashboard。
+   - 单测：JobMatchServiceTest 9 用例（中文全命中100、无关JD 0、部分匹配四舍五入 40/90→44、附加关键词上限、英文大小写不敏感、空字段权重剔除、404/403、jobTypeLabel）。
+2. **代码学习指南**：docs/CODE_GUIDE.md —— 按模块逐文件讲解（Auth/Application/A2三模块/JobMatch/部署），每个类讲职责、关键注解、事务边界与设计原因；8 组「面试常见问题 × 本项目答案」（@Transactional 失效/noRollbackFor 实例、JWT 过滤器链、软删 SQLRestriction、数据隔离、Flyway baseline 策略、静态汇率权衡、测试金字塔、容器化踩坑）；附文件索引表。
+3. **自查修复**：完整 mvnw test + npm run build + npm test 全绿；修复 DashboardPage 测试因 JobMatchCard 引入 getApplications 而缺 mock 的问题（page.test.tsx mock 补充）；.env.example 与 docker-compose.yml 环境变量键完全对齐（无缺失）；凭据保险箱演示环境检查：applications.username/password 均为空，无任何真实招聘网站凭据。
+
+## 测试真实结果（exit code）
+
+- 后端 mvnw -B test：BUILD SUCCESS，**Tests run: 223, Failures: 0, Errors: 0, Skipped: 1**（exit 0；日志 backend/build-a4-test.log，其中 JobMatchServiceTest 9/9）。过程中两次真实失败如实记录并修复：① 期望值未做四舍五入（40/90 期望40实为44）② 404 用例多余 stub 触发 Mockito UnnecessaryStubbing。
+- 前端 npm run build：exit 0（frontend-build-a4.log）；npm test：**43 套件 / 385 用例全绿**（exit 0；新增 jobMatch.test.ts 2 用例；修复 DashboardPage 缺 getApplications mock 的真实失败，见 frontend-test-a4.log）。
+- 磁盘纪律遵守：本轮零镜像重建（纯代码/文档变更用本地 mvnw/npm 验证）。
+
+## Backlog 剩余项
+
+- Recharts 雷达图（/offers 视觉增强）。
+- jieba-wasm 中文分词（当前轻量 contains 方案对整词 JD 已够用，若需子串粒度再引入）。
+- AI 抽取真实调用联调（待用户配置 Anthropic Key 后在部署环境验证中文 JD 端到端）。
+- i18n 运行时切换 UI（当前 setLocale 可编程切换，未暴露语言切换按钮）。
+
+## 提交清单
+
+- A4: bilingual job match scoring, Chinese AI extraction fields and dashboard match card
+- A4: add docs/CODE_GUIDE.md module-by-module learning guide
+
+## 阻塞项
+
+- 无。

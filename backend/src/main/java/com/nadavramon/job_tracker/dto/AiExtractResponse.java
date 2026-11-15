@@ -1,5 +1,7 @@
 package com.nadavramon.job_tracker.dto;
 
+import java.util.List;
+
 public class AiExtractResponse {
 
     private String companyName;
@@ -7,6 +9,11 @@ public class AiExtractResponse {
     private String location;
     private String jobType;
     private String websiteLink;
+    private List<String> responsibilities;
+    private List<String> requirements;
+    private Double salaryMin;
+    private Double salaryMax;
+    private String salaryCurrency;
 
     public AiExtractResponse() {
     }
@@ -57,5 +64,44 @@ public class AiExtractResponse {
 
     public void setWebsiteLink(String websiteLink) {
         this.websiteLink = websiteLink;
+    }
+    public List<String> getResponsibilities() {
+        return responsibilities;
+    }
+
+    public void setResponsibilities(List<String> responsibilities) {
+        this.responsibilities = responsibilities;
+    }
+
+    public List<String> getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(List<String> requirements) {
+        this.requirements = requirements;
+    }
+
+    public Double getSalaryMin() {
+        return salaryMin;
+    }
+
+    public void setSalaryMin(Double salaryMin) {
+        this.salaryMin = salaryMin;
+    }
+
+    public Double getSalaryMax() {
+        return salaryMax;
+    }
+
+    public void setSalaryMax(Double salaryMax) {
+        this.salaryMax = salaryMax;
+    }
+
+    public String getSalaryCurrency() {
+        return salaryCurrency;
+    }
+
+    public void setSalaryCurrency(String salaryCurrency) {
+        this.salaryCurrency = salaryCurrency;
     }
 }
