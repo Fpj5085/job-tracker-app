@@ -1,0 +1,53 @@
+ Image a-job-tracker-jt-app Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 543B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 407B 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/eclipse-temurin:21-jre
+#3 DONE 3.9s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 87B done
+#4 DONE 0.0s
+
+#5 [1/3] FROM docker.io/library/eclipse-temurin:21-jre@sha256:18bb4a91a3dea3f03ee31d3755af34dfb40f904fc77ab56cdc2f092e32fff9c2
+#5 resolve docker.io/library/eclipse-temurin:21-jre@sha256:18bb4a91a3dea3f03ee31d3755af34dfb40f904fc77ab56cdc2f092e32fff9c2 0.0s done
+#5 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 64.13MB 3.6s done
+#6 DONE 3.6s
+
+#7 [2/3] WORKDIR /app
+#7 CACHED
+
+#8 [3/3] COPY target/job-tracker-*.jar app.jar
+#8 DONE 0.3s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 1.4s done
+#9 exporting manifest sha256:5797566e2a4de782c4f92d4ab841f4227f45e925ecacfb2bfbfe04b9b01c6e70 0.0s done
+#9 exporting config sha256:c6ce62612346da3f0e27575e0b1f9f283eec64651741e777c716c9f0cb01850d 0.0s done
+#9 exporting attestation manifest sha256:43482e9bfe6e863db7a8432dd914e924fe1b3b295a48d5ff7ee444dc1c4c4333 0.0s done
+#9 exporting manifest list sha256:5e326349cceaf6c8b30c5ada757b846c1c4c5033c780d89465c4f73fd7fd462e
+#9 exporting manifest list sha256:5e326349cceaf6c8b30c5ada757b846c1c4c5033c780d89465c4f73fd7fd462e 0.0s done
+#9 naming to docker.io/library/a-job-tracker-jt-app:latest done
+#9 unpacking to docker.io/library/a-job-tracker-jt-app:latest
+#9 unpacking to docker.io/library/a-job-tracker-jt-app:latest 0.4s done
+#9 DONE 2.1s
+
+#10 resolving provenance for metadata file
+#10 DONE 0.0s
+ Image a-job-tracker-jt-app Built 
+ Container jt-postgres Running 
+ Container jt-app Recreate 
+ Container jt-app Recreated 
+ Container jt-postgres Waiting 
+ Container jt-postgres Healthy 
+ Container jt-app Starting 
+ Container jt-app Started 

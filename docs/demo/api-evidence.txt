@@ -1,0 +1,38 @@
+=== A3 API evidence 11/14/2026 19:03:46 ===
+1) REGISTER demo@example.com:
+{"username":"demo"}
+2) CREATE APPLICATION:
+{"id":"335468f7-c001-4004-a51a-2029bcb172f0","companyName":"云帆科技","jobType":"FULL_TIME","location":"杭州","jobRole":"全栈工程师","appliedDate":"2026-11-10","status":"OFFER","statusChangedDate":"2026-11-14","websiteLink":null,"username":null}
+APP_ID=335468f7-c001-4004-a51a-2029bcb172f0
+3) CREATE INTERVIEW:
+{"id":"f0e2249f-6e16-4b43-b010-9bebd39f1000","applicationId":"335468f7-c001-4004-a51a-2029bcb172f0","stage":"FINAL","scheduledAt":"2026-11-14T20:00:00","timezone":"Asia/Shanghai","mode":"ONLINE","interviewerNotes":"终面：项目深挖","feedback":null,"result":"PENDING"}
+4) CREATE COMMUNICATION:
+{"id":"0d96a8d4-ff1c-4450-8029-113e280d7408","applicationId":"335468f7-c001-4004-a51a-2029bcb172f0","channel":"EMAIL","direction":"OUT","occurredAt":"2026-11-12T09:00:00","summary":"发送感谢邮件并确认薪酬范围","nextAction":"等待口头offer确认","nextActionAt":"2026-11-15T12:00:00"}
+5) CREATE OFFER1 (CNY):
+{"id":"c6da2d8e-32df-4da3-9053-916e0bc00e38","applicationId":"335468f7-c001-4004-a51a-2029bcb172f0","companyName":"云帆科技","jobRole":"全栈工程师","baseSalary":32000,"bonus":64000,"equity":50000,"currency":"CNY","location":"杭州","remotePolicy":"混合办公","insurance":null,"ptoDays":15,"startDate":null,"notes":null}
+6) CREATE OFFER2 (USD):
+{"id":"87c63898-5cfc-4483-9afa-748110d10f19","applicationId":"335468f7-c001-4004-a51a-2029bcb172f0","companyName":"云帆科技","jobRole":"全栈工程师","baseSalary":7500,"bonus":8000,"equity":null,"currency":"USD","location":"Remote","remotePolicy":null,"insurance":null,"ptoDays":20,"startDate":null,"notes":null}
+7) COMPARE:
+{"baseCurrency":"CNY","rates":{"CNY":1.0,"USD":7.25,"EUR":7.85},"items":[{"offer":{"id":"87c63898-5cfc-4483-9afa-748110d10f19","applicationId":"335468f7-c001-4004-a51a-2029bcb172f0","companyName":"云帆科技","jobRole":"全栈工程师","baseSalary":7500.00,"bonus":8000.00,"equity":null,"currency":"USD","location":"Remote","remotePolicy":null,"insurance":null,"ptoDays":20,"startDate":null,"notes":null},"normalizedAnnualPackage":710500.00},{"offer":{"id":"c6da2d8e-32df-4da3-9053-916e0bc00e38","applicationId":"335468f7-c001-4004-a51a-2029bcb172f0","companyName":"云帆科技","jobRole":"全栈工程师","baseSalary":32000.00,"bonus":64000.00,"equity":50000.00,"currency":"CNY","location":"杭州","remotePolicy":"混合办公","insurance":null,"ptoDays":15,"startDate":null,"notes":null},"normalizedAnnualPackage":498000.00}]}
+8) PSQL VERIFY:
+ company_name |  job_role  
+--------------+------------
+ 云帆科技     | 全栈工程师
+(1 row)
+
+ stage |  mode  | result  
+-------+--------+---------
+ FINAL | ONLINE | PENDING
+(1 row)
+
+ channel | direction |          summary           
+---------+-----------+----------------------------
+ EMAIL   | OUT       | 发送感谢邮件并确认薪酬范围
+(1 row)
+
+ base_salary | currency | pto_days 
+-------------+----------+----------
+    32000.00 | CNY      |       15
+     7500.00 | USD      |       20
+(2 rows)
+

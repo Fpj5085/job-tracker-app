@@ -1,0 +1,124 @@
+time="2026-11-14T18:18:24+08:00" level=warning msg="The \"JWT_SECRET\" variable is not set. Defaulting to a blank string."
+time="2026-11-14T18:18:24+08:00" level=warning msg="The \"ENCRYPTION_SECRET\" variable is not set. Defaulting to a blank string."
+ Image a-job-tracker-jt-frontend Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.08kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 858B 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.m.daocloud.io/library/node:22-alpine
+#3 DONE 0.2s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 57B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [build 1/5] FROM docker.m.daocloud.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a
+#6 resolve docker.m.daocloud.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a 0.1s done
+#6 DONE 0.1s
+
+#7 [stage-1 2/4] WORKDIR /app
+#7 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 2.82MB 2.1s done
+#5 DONE 2.2s
+
+#8 [build 2/5] WORKDIR /build
+#8 CACHED
+
+#9 [build 3/5] COPY . .
+#9 DONE 5.7s
+
+#10 [build 4/5] RUN npm install --no-save --fetch-retries=8 --fetch-retry-mintimeout=20000 lightningcss-linux-x64-musl @next/swc-linux-x64-musl || true
+#10 117.1 
+#10 117.1 added 19 packages, and audited 734 packages in 2m
+#10 117.1 
+#10 117.1 188 packages are looking for funding
+#10 117.1   run `npm fund` for details
+#10 117.3 
+#10 117.3 30 vulnerabilities (4 low, 11 moderate, 14 high, 1 critical)
+#10 117.3 
+#10 117.3 To address issues that do not require attention, run:
+#10 117.3   npm audit fix
+#10 117.3 
+#10 117.3 To address all issues (including breaking changes), run:
+#10 117.3   npm audit fix --force
+#10 117.3 
+#10 117.3 Run `npm audit` for details.
+#10 117.3 npm notice
+#10 117.3 npm notice New major version of npm available! 10.9.9 -> 12.2.2
+#10 117.3 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+#10 117.3 npm notice To update run: npm install -g npm@12.2.2
+#10 117.3 npm notice
+#10 DONE 117.5s
+
+#11 [build 5/5] RUN npm run build
+#11 0.627 
+#11 0.627 > job-tracker-frontend@0.1.0 build
+#11 0.627 > next build
+#11 0.627 
+#11 1.507 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+#11 1.508 This information is used to shape Next.js' roadmap and prioritize features.
+#11 1.508 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#11 1.508 https://nextjs.org/telemetry
+#11 1.508 
+#11 1.540 ▲ Next.js 16.1.3 (Turbopack)
+#11 1.540 
+#11 1.599   Creating an optimized production build ...
+#11 15.81 ✓ Compiled successfully in 13.6s
+#11 15.82   Running TypeScript ...
+#11 21.59   Collecting page data using 15 workers ...
+#11 22.54   Generating static pages using 15 workers (0/11) ...
+#11 23.22   Generating static pages using 15 workers (2/11) 
+#11 23.22   Generating static pages using 15 workers (5/11) 
+#11 23.22   Generating static pages using 15 workers (8/11) 
+#11 23.29 ✓ Generating static pages using 15 workers (11/11) in 750.7ms
+#11 23.30   Finalizing page optimization ...
+#11 23.90 
+#11 23.90 Route (app)
+#11 23.90 ┌ ○ /
+#11 23.90 ├ ○ /_not-found
+#11 23.90 ├ ○ /applications
+#11 23.90 ├ ƒ /applications/[id]
+#11 23.90 ├ ○ /applications/new
+#11 23.90 ├ ○ /dashboard
+#11 23.90 ├ ○ /login
+#11 23.90 ├ ○ /offers
+#11 23.90 ├ ○ /register
+#11 23.90 └ ○ /settings
+#11 23.90 
+#11 23.90 
+#11 23.90 ○  (Static)   prerendered as static content
+#11 23.90 ƒ  (Dynamic)  server-rendered on demand
+#11 23.90 
+#11 DONE 24.1s
+
+#12 [stage-1 3/4] COPY --from=build /build/.next/standalone ./
+#12 DONE 0.4s
+
+#13 [stage-1 4/4] COPY --from=build /build/.next/static ./.next/static
+#13 DONE 0.2s
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 2.3s done
+#14 exporting manifest sha256:c9095405116442e3fef5660bc1b579a3bd4b673f0c1c3baa74a5ae3d894571b8 0.0s done
+#14 exporting config sha256:c831b39ec56e54e9c8d083a7d49abd126eeeabd74e7a08de078e70ebfdc9c79b 0.0s done
+#14 exporting attestation manifest sha256:aa96a3032d9ff368434716c16a2ff48730bba384bd473aff126767ed04534780 0.1s done
+#14 exporting manifest list sha256:b32e12ad985915c3da793fc2468f71e38a356200e4e488cd8a43dd705ec96129
+#14 exporting manifest list sha256:b32e12ad985915c3da793fc2468f71e38a356200e4e488cd8a43dd705ec96129 0.0s done
+#14 naming to docker.io/library/a-job-tracker-jt-frontend:latest done
+#14 unpacking to docker.io/library/a-job-tracker-jt-frontend:latest
+#14 unpacking to docker.io/library/a-job-tracker-jt-frontend:latest 0.8s done
+#14 DONE 3.3s
+
+#15 resolving provenance for metadata file
+#15 DONE 0.1s
+ Image a-job-tracker-jt-frontend Built 

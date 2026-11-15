@@ -1,0 +1,37 @@
+Job Tracker
+Dashboard
+Applications
+New Application
+Offers
+Settings
+demo
+Log out
+← 返回列表
+云帆科技
+Offer
+
+全栈工程师 · 杭州
+
+面试时间线 (1)
+沟通记录 (1)
+Offer (2)
+HR_SCREEN
+TECHNICAL
+SYSTEM_DESIGN
+FINAL
+CROSS
+ONLINE
+ONSITE
+PHONE
+添加面试
+FINAL · ONLINE
+✕
+
+2026/11/14 20:00:00 (Asia/Shanghai)
+
+终面：项目深挖
+
+PENDING
+PASS
+FAIL
+NO_SHOW

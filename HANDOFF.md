@@ -121,3 +121,45 @@
 ## 阻塞项
 
 - 无硬阻塞。注：演示服务（jt-postgres 容器、后端 8081、前端 dev）在任务结束后停止/移除；截图仅存在于会话未落盘
+---
+
+# A3 — P2 部署与演示（2026-11-14）
+
+## 部署方案与文件
+
+- docker-compose.yml：jt-postgres（postgres:17，127.0.0.1:55432，健康检查 pg_isready，卷 jt-pgdata）+ jt-app（Spring Boot，127.0.0.1:8081，depends_on service_healthy）+ jt-frontend（Next.js standalone，127.0.0.1:3101）。全部端口只绑 127.0.0.1。
+- backend/Dockerfile：宿主机用仓库 mvnw 打包 jar 后 COPY 进 eclipse-temurin:21-jre 运行（本机网络 MITM 导致容器内 Maven/npm 下载不可靠，注释已说明）。
+- frontend/Dockerfile：node:22-alpine 两阶段，node_modules 由宿主 COPY，linux-musl 原生二进制（lightningcss/next-swc）以 tarball 形式 vendor 在 docker-native/ 并在构建期解包；Next 配置启用 output: standalone。
+- .env.example：DB/JWT/ENCRYPTION 等全部走环境变量；.env 在 .gitignore（第 15 行），未提交。
+- WORKSPACE_REGISTRY.md：容器/端口权威约定（本仓库此前不存在该文件，A3 建立并按任务单约定 jt-* / 55432 / 8081 / 3101 执行）。
+- Flyway：新增 spring-boot-flyway + flyway-core + flyway-database-postgresql 依赖（Boot 4 自动配置在独立模块）；迁移 db/migration/V1__baseline_schema.sql（users/applications/refresh_tokens 基线）+ V2-V4（A2 模块），启动时自动执行；测试环境 spring.flyway.enabled=false 保持既有 IT 行为（RefreshTokenVersionColumnMigrationIT 依赖 ddl-auto=update 对遗留表加列）。
+
+## 真实命令输出摘要（完整日志在 docs/demo/）
+
+- docker compose build：jt-app 与 jt-frontend 镜像构建成功（compose-build.log / compose-build-frontend.log）。
+- docker compose up -d：三容器 Up，jt-postgres healthy（compose-up.log）。jt-app 日志：Successfully applied 4 migrations / Started JobTrackerApplication（V1 baseline 在新库执行，V2-V4 success=t）。
+- 三层联动：docs/demo/api-evidence.txt 记录注册/创建申请/面试/沟通/两个 Offer/对比 的完整 curl 请求与响应；psql 查询确认 users=1、applications=1、interviews=1、communications=1、offers=2 落库（offers：32000 CNY pto 15；7500 USD pto 20）。/offers/compare 返回排序 [USD 710500.00, CNY 498000.00]，baseCurrency CNY，rates {USD:7.25, EUR:7.85, CNY:1.0}。
+- 演示数据（合成）：demo@example.com / Password123!（云帆科技 · 全栈工程师 · 杭州）。凭据保险箱未演示导入任何真实招聘网站凭据。
+
+## 持久化验证证据
+
+- docker compose down（保留卷 jt-pgdata）→ up：demo 账号登录 200；psql 确认 users=1 / applications=1 / offers=2 全部保留；浏览器重新登录后数据完整（step7-data-after-restart.png）。
+- docker compose down -v → up：空库从零重建，Flyway 依次执行 v1 baseline schema → v2/v3/v4，Successfully applied 4 migrations；psql users=0；前端 3101 返回 200。可重复部署验证通过。
+- 演示数据已重新灌入（见 api-evidence.txt 步骤），当前 compose 栈处于运行状态可直接演示。
+
+## 演示材料路径（docs/demo/）
+
+- 截图：step1-login.png、step2-dashboard.png（含 24h 面试提醒横幅）、step3-interview-timeline.png、step4-communications.png、step5-offer-entry.png、step6-offers-compare.png、step7-data-after-restart.png（重启后数据完整）。
+- 录屏：demo-flow.mp4（60 秒，ffmpeg gdigrab + CDP 驱动可视 Chrome 全流程：登录态仪表盘 → 申请列表 → 面试时间线 → 沟通记录 → Offer 录入 → /offers 对比）。
+- 脚本与日志：capture-step.cjs、record-demo.cjs、api-evidence.txt、compose-up.log、persistence-down.log / persistence-up.log / persistence-down-v.log、disk-cleanup.log。
+
+## 磁盘事件与清理结果（总控指令）
+
+- 背景：A3 期间反复镜像构建使 Docker Build Cache 膨胀（曾达 316 条 / 10.25GB），C 盘告急。
+- 处置：jt-frontend 构建成功后未再发起全量重建；docker system df BEFORE：Build Cache 252 条 / 5.454GB；docker builder prune -f 仅回收 0B（剩余缓存多数 ACTIVE，被现役镜像引用）；随后 docker builder prune -af 全量清空，回收 3.812GB，Build Cache 降至 8 条 / 1.642GB（均为现役镜像层，不可再回收）；docker image prune -f 回收 0B（无悬空镜像）。docker compose ps：jt-app / jt-frontend / jt-postgres 全部 Up 且 healthy。完整输出见 docs/demo/disk-cleanup.log。
+- 纪律：后续任何再构建先报备总控。
+
+## Backlog
+
+- 镜像瘦身：backend 运行镜像 577MB（jre），可换 alpine/distroless；frontend 构建上下文含 node_modules（因 vendor 二进制方案），可改为两阶段产物拷贝以减小上下文。
+- CI 中加 docker compose config 校验与 .env.example 完整性检查。

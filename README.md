@@ -223,6 +223,29 @@ A2 新增三个业务模块（全部含单测 + Testcontainers IT，前端 383 �
 
 AI 岗位匹配中文化（jieba-wasm、中文 JD prompt、i18n 字典）。方案详见 HANDOFF.md 的 Backlog 小节，涉及代码改动时将在独立分支进行并保留上游提交历史。
 
+## 一键部署（Docker Compose，仅本地）
+
+```bash
+# 1. 克隆并进入仓库
+git clone https://github.com/nadavramon/job-tracker-app.git
+cd job-tracker-app
+
+# 2. 准备环境变量（.env 不入库；填入 32+ 位 JWT_SECRET / ENCRYPTION_SECRET）
+cp .env.example .env
+
+# 3. 构建后端 jar（容器内 Maven 下载在本项目网络环境不可用，故由宿主机构建）
+cd backend && ./mvnw -B -DskipTests package && cd ..
+
+# 4. 一键启动（jt-postgres 55432 / jt-app 8081 / jt-frontend 3101，全部仅绑定 127.0.0.1）
+docker compose up -d --build
+
+# 5. 访问
+#    前端: http://localhost:3101   后端 API: http://localhost:8081
+#    停止（保留数据）: docker compose down    停止并清库: docker compose down -v
+```
+
+以上命令已在 Windows 11 + Docker Desktop 实际验证（见 HANDOFF.md A3 章节：Flyway 自动迁移、三层联动 API/psql 证据、持久化与从零重建验证）。
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.

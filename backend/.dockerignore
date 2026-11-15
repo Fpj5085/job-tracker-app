@@ -1,0 +1,4 @@
+.mvn/wrapper/*.zip
+build-*.log
+*.log
+demo-*.jar
