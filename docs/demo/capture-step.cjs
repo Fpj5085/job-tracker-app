@@ -27,6 +27,7 @@ function getJson(p, method) {
 }
 
 let ws; let id = 0; const pending = new Map();
+const consoleEvents = [];
 function send(method, params) {
   return new Promise((res, rej) => { const mid = ++id; pending.set(mid, { res, rej }); ws.send(JSON.stringify({ id: mid, method, params: params || {} })); });
 }
@@ -42,8 +43,8 @@ async function main() {
   ws = new WS(page.webSocketDebuggerUrl);
   await new Promise(r => ws.addEventListener("open", r, { once: true }));
   ws.addEventListener("message", m => { const msg = JSON.parse(m.data); if (msg.id && pending.has(msg.id)) { const p = pending.get(msg.id); pending.delete(msg.id); msg.error ? p.rej(new Error(JSON.stringify(msg.error))) : p.res(msg.result); } });
-  await send("Page.enable"); await send("Network.enable");
-  await send("Network.setCookie", { name: "jwt", value: JWT, domain: "localhost", url: "http://localhost:3101/", path: "/", httpOnly: true, sameSite: "Lax" });
+  ws.addEventListener("message", m => { const msg = JSON.parse(m.data); if (msg.method === "Runtime.consoleAPICalled") consoleEvents.push(msg.params.type + ": " + msg.params.args.map(a => a.value || a.description || "").join(" ")); if (msg.method === "Runtime.exceptionThrown") consoleEvents.push("EXCEPTION: " + ((msg.params.exceptionDetails.exception && msg.params.exceptionDetails.exception.description) || msg.params.exceptionDetails.text)); if (msg.id && pending.has(msg.id)) { const p = pending.get(msg.id); pending.delete(msg.id); msg.error ? p.rej(new Error(JSON.stringify(msg.error))) : p.res(msg.result); } });
+  await send("Page.enable"); await send("Network.enable"); await send("Runtime.enable");
   await send("Page.navigate", { url: targetUrl }); await sleep(4000);
   await send("Runtime.evaluate", { expression: "localStorage.setItem('username', 'demo')" });
   await send("Page.navigate", { url: targetUrl }); await sleep(4000);
@@ -55,6 +56,7 @@ async function main() {
   fs.writeFileSync(path.join(OUT, outName), Buffer.from(shot.data, "base64"));
   const text = await send("Runtime.evaluate", { expression: "document.body.innerText", returnByValue: true });
   fs.writeFileSync(path.join(OUT, outName.replace(".png", ".txt")), String(text.result.value), "utf8"); // innerText dump
+  fs.writeFileSync(path.join(OUT, outName.replace(".png", ".console.txt")), consoleEvents.join("\n"), "utf8");
   console.log("saved", outName);
   chrome.kill(); process.exit(0);
 }

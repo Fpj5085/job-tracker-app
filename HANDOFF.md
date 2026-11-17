@@ -198,3 +198,21 @@
 ## 阻塞项
 
 - 无。
+## A5 章节收尾说明（总控代笔，2026-11-18 00:0x）
+
+### 完成项
+1. 中文全流程本地栈演示验证：backend/start-a5-local.ps1 + frontend/start-a5-front.ps1（后端 8082 + 前端本地构建），演示数据（星河数据/云帆科技 合成 Offer）通过 docs/demo/a5-api-evidence.txt 留证——4 个 Offer 归一化年包对比（USD/CNY 汇率换算）与 POST match 评分（score 39，命中"杭州/全职"）。
+2. 仪表盘验证截图：docs/demo/a5-verify-dashboard.png / .txt（innerText 导出）。
+3. layout.tsx 离线字体修复：移除 next/font/google 依赖（容器内 fonts.googleapis.com 不可达导致构建失败），globals.css 保持原样（实验性删除已回滚）。
+4. 复跑验证：backend mvnw test → Tests run: 223, Failures: 0, Errors: 0, Skipped: 1，BUILD SUCCESS（exit 0）；frontend npm test → 43 套件 / 385 用例全绿（exit 0）。
+
+### 录屏失败记录（如实）
+- P2 的 docs/demo/demo-flow.mp4（2.06MB，已提交）仍是正式演示视频。
+- A5 的 a5-demo.mp4 录制产物损坏（中断/引擎崩溃所致），已标注无效且不入库（保留在本地供排查）。
+- gdigrab 全屏录制存在两个不可修复问题：桌面无关私人窗口入镜（隐私）与窗口遮挡时全黑——与 C 项目结论一致，API 证据 + 截图作为等效交付（已获验收口径认可）。
+
+### 未提交物（本地保留，不入库）
+- docs/demo/a5-demo.mp4（损坏）、a5-demo.jar（二进制）、临时检查 txt（check2/check3/head-check/names-check、a5-verify-dashboard.console.txt）、run-a5-record.ps1、launch-chrome-a5.ps1、frontend/docker-native/（musl tarball 实验）——均已加 .gitignore。
+
+### Backlog（继承 A4）
+Recharts 雷达图、jieba-wasm 子串粒度分词、AI 抽取真实调用联调（待 Anthropic Key）、i18n 运行时切换按钮。

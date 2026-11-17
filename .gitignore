@@ -21,3 +21,14 @@ node_modules/
 package.json
 package-lock.json
 .playwright-mcp
+# A5 local demo scratch (do not commit)
+docs/demo/a5-demo.mp4
+docs/demo/a5-demo.jar
+docs/demo/check*.txt
+docs/demo/head-check.txt
+docs/demo/names-check.txt
+docs/demo/a5-verify-dashboard.console.txt
+docs/demo/a5-record.cjs
+docs/demo/launch-chrome-a5.ps1
+run-a5-record.ps1
+frontend/docker-native/
