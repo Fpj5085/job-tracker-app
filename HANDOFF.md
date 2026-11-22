@@ -259,3 +259,40 @@ Recharts 雷达图、jieba-wasm 子串粒度分词、AI 抽取真实调用联调
 
 **GO（有条件）**——条件 ①：历史含本地演示密钥字面量两处 diff（低风险，建议 squash 发布或书面接受）；条件 ②：构建日志含本机用户名路径 2 处（披露即可）。均无真实凭据/隐私，**无 NO-GO 项**。
 **阻塞项**：无（a5-demo.mp4 录屏因 gdigrab 全屏隐私风险按总控通报改分步截图交付并被 A5 验收；本轮不涉及）。
+---
+
+# A-GH2 — 公开发布执行（2026-11-22）
+
+## 仓库
+
+- **公开仓库**: https://github.com/Fpj5085/job-tracker-app（public，方案乙书面接受低风险披露，完整历史 A1→A5→A-GH1 保留）
+- origin → Fpj5085/job-tracker-app；upstream → nadavramon/job-tracker-app（保留）
+- 仅推送 main（未用 --mirror/--all）
+- Description：Full-stack job application tracker (Spring Boot 4 + Next.js 16 + PostgreSQL 17) with interview management, HR communication log, multi-currency offer comparison and bilingual JD match scoring. Fork of nadavramon/job-tracker-app.
+- Topics：spring-boot, nextjs, react, typescript, postgresql, docker-compose, flyway, job-tracker, job-search, full-stack
+
+## 线上复核（gh api）
+
+- LICENSE / README.md / docs/CODE_GUIDE.md / docs/RELEASE_AUDIT.md 均在线上存在
+- 提交数 66（含完整 A1→A5→A-GH1 历史），HEAD = 1eb0386（lint 修复提交）
+- 目录树 365 项；分支 main
+
+## CI 真实运行
+
+- 首次 CI run（A-GH1 提交）失败：frontend Lint 报 `react-hooks/set-state-in-effect`（详情页 useEffect 中同步 setLoading）+ 1 个 unused-var 警告
+- **修复**：setState 移入 async 闭包（保持取消语义）；删除未用变量。commit 1eb0386 推送后 CI 重跑
+- **第二次 run 全绿**：https://github.com/Fpj5085/job-tracker-app/actions/runs/45023868187 — Backend Tests ✓ 1m20s / Frontend Tests ✓ 58s / CI Gate ✓（services postgres + 占位密钥路径，真实运行）
+- README 顶部 CI badge 已在 A6 加过（指向 ci.yml），CI 绿后生效
+
+## Tag + Release + SHA256
+
+- tag `v1.0.0`（annotated，带发布说明）已推送
+- Release: https://github.com/Fpj5085/job-tracker-app/releases/tag/v1.0.0（附 B1→A5 变更摘要）
+- 附件 artifact：job-tracker-0.0.1-SNAPSHOT.jar
+- **JAR SHA256**: `27EC496EB5F6254C4C9DB72B348BF6C4EB09AC4B636A98996724401286822291`（docs/demo/jar-sha256.txt 留档）
+
+## 推送排障记录（如实）
+
+- 首次 push 报 `remote unpack failed: did not receive expected object 01246dfb`——根因：**仓库是 shallow clone**（.git/shallow 指向 upstream/main 764a5b2），推送到无共享上游对象的新仓库时缺父对象。
+- 修复：`git fetch --unshallow upstream` 补全历史后 push 一次成功（f7bfb22 → main）。
+- 证据：docs/demo/push-trace.log / push-err.txt（失败态）、git ls-remote 输出（成功态）。
