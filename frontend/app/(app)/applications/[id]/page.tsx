@@ -48,7 +48,13 @@ export default function ApplicationDetailPage() {
     }, [id]);
 
     useEffect(() => {
-        if (ready && id) fetchAll().finally(() => setLoading(false));
+        if (!ready || !id) return;
+        let cancelled = false;
+        (async () => {
+            await fetchAll();
+            if (!cancelled) setLoading(false);
+        })();
+        return () => { cancelled = true; };
     }, [ready, id, fetchAll]);
 
     if (!ready || loading) {

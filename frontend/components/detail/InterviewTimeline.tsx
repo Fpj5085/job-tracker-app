@@ -11,7 +11,6 @@ const MODES: InterviewMode[] = ['ONLINE', 'ONSITE', 'PHONE'];
 const RESULTS: InterviewResult[] = ['PENDING', 'PASS', 'FAIL', 'NO_SHOW'];
 const STAGE_OPTIONS = STAGES.map((v) => ({ value: v, label: v }));
 const MODE_OPTIONS = MODES.map((v) => ({ value: v, label: v }));
-const RESULT_OPTIONS = RESULTS.map((v) => ({ value: v, label: v }));
 
 interface Props {
     applicationId: string;

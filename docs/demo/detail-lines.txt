@@ -1,0 +1,17 @@
+46:             setError('Failed to load application detail');
+47:         }
+48:     }, [id]);
+49: 
+50:     useEffect(() => {
+51:         if (ready && id) {
+52:             let cancelled = false;
+53:             fetchAll().catch(() => {}).then(() => { if (!cancelled) setLoading(false); });
+54:             return () => { cancelled = true; };
+55:         }
+56:     }, [ready, id, fetchAll]);
+57: 
+58:     if (!ready || loading) {
+59:         return <div className="flex items-center justify-center py-16"><Spinner size="lg" /></div>;
+60:     }
+61: 
+62:     if (error || !application) {
