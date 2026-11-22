@@ -45,6 +45,10 @@ The Job Tracker App helps job seekers stay organized during their search. It pro
 - **AI-Powered Job Extraction** — Paste a job posting URL or raw text and let Claude automatically extract company, role, location, and more.
 - **Interactive Dashboard** — Summary stats bar, monthly application trends, and status breakdown charts powered by Recharts.
 - **Portal Credentials Vault** — Store login credentials for company portals, encrypted at rest with AES-256-GCM.
+- **Interview Management** — Schedule interviews per application (stage, mode, timezone), track results, and get a 24-hour reminder banner on the dashboard.
+- **HR Communication Log** — Record every email/phone/portal exchange with next-action tracking, due items pinned first.
+- **Multi-Currency Offer Comparison** — Normalize offers into a base currency with a built-in FX table, weight-adjusted scoring and side-by-side comparison.
+- **Job Match Score (bilingual)** — Paste a Chinese or English JD and get a weighted match score against each application (pure-Java algorithm, works offline).
 - **Secure Authentication** — JWT-based stateless auth with HttpOnly cookies. Supports email and username login.
 - **Search, Filter & Sort** — Full-text search, status filtering, multi-column sorting, and server-side pagination.
 - **Modern UI** — Responsive design with Light/Dark/System themes, Lucide React icons, custom toast notifications, and entrance animations.
@@ -186,6 +190,16 @@ npm run dev
 |:---|:---|:---|
 | `POST` | `/api/ai/extract` | Extract job details from text or URL (rate-limited) |
 
+### Interviews / Communications / Offers / Match (Authenticated, fork additions)
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET/POST` | `/applications/{id}/interviews` | List / schedule interviews; `PATCH/DELETE` on `/interviews/{iid}` |
+| `GET` | `/interviews/upcoming?hours=24` | Interviews due in the next N hours (dashboard banner) |
+| `GET/POST` | `/applications/{id}/communications` | List / record HR communications |
+| `GET/POST` | `/applications/{id}/offers` | List / add offers; `PATCH/DELETE` on `/offers/{oid}` |
+| `GET` | `/offers/compare` | All offers normalized to the base currency, sorted |
+| `POST` | `/applications/{id}/match` | Bilingual JD match score for this application |
+
 </details>
 
 ## Roadmap
@@ -197,7 +211,22 @@ npm run dev
 - [x] Phase 5: Portal Credentials Vault (encrypted)
 - [x] Phase 6: HttpOnly Cookie Auth & UI Refresh
 - [ ] Phase 7: Refresh Token Rotation
-- [ ] Phase 8: Dockerization & Cloud Deployment
+- [x] Phase 7: Refresh Token Rotation (upstream spec 0001)
+- [x] Fork: Interview Management, HR Communication Log, Offer Comparison, Job Match Scoring
+- [x] Fork: Docker Compose deployment (jt-postgres / jt-app / jt-frontend, localhost-only)
+- [ ] Cloud Deployment
+
+## Known Limitations
+
+- **AI extraction** requires a personal Anthropic API key (set in Settings) and is mock-tested only — no real LLM call is exercised in tests or CI.
+- **Job match scoring** is a lightweight keyword-weight algorithm (contains-based, bilingual); it is not semantic search — quality depends on JD wording.
+- **FX rates are static** (built-in table, env-configurable); they do not update from the market.
+- **CI note**: `next/font/google` requires network access to fonts.googleapis.com at build time; in restricted networks remove the two Google font imports in `frontend/app/layout.tsx` (font variables are already aliased in `globals.css`).
+- The fork has been validated on Windows 11 + Docker Desktop; Linux/macOS paths in the Compose file are untested.
+
+## AI-Agent Collaboration Statement
+
+This fork was developed with an AI coding agent (multi-agent pipeline) doing the heavy lifting: scaffolding, repetitive boilerplate, test generation and docs drafts. The human author was responsible for requirements, acceptance review, key design decisions (e.g. static FX table, browser-polling reminders instead of a message queue, no history rewrite), security-sensitive choices and the final code review of every commit. See `docs/CODE_GUIDE.md` for a module-by-module tour written for the author's own interview preparation.
 
 ## Contributing
 
