@@ -1,4 +1,5 @@
-Set-Location "K:\Fpj Project\A-job-tracker\frontend"
+# A5 frontend demo launcher - path-independent (uses $PSScriptRoot)
+Set-Location (Join-Path $PSScriptRoot "..rontend")
 $env:PORT = "3102"
 Start-Process -FilePath cmd -ArgumentList "/c","npm start -- -p 3102" -WindowStyle Hidden
 Start-Sleep 12

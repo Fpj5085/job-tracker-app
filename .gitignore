@@ -32,3 +32,6 @@ docs/demo/a5-record.cjs
 docs/demo/launch-chrome-a5.ps1
 run-a5-record.ps1
 frontend/docker-native/
+
+# A5 local demo launcher config (real values)
+.env.local

@@ -1,3 +1,6 @@
+> [!NOTE]
+> **Fork notice (secondary development)**: This repository is a fork of [nadavramon/job-tracker-app](https://github.com/nadavramon/job-tracker-app) (MIT) with the full upstream history preserved. Secondary development by [Fpj5085](https://github.com/Fpj5085) adds four modules on top of the upstream baseline: **interview management, HR communication records, multi-currency offer comparison, and AI job-match scoring (pure-Java weighted scoring, no LLM inference for matching)** — see [`docs/CODE_GUIDE.md`](docs/CODE_GUIDE.md) for a guided tour of both upstream and fork code. The AI-extraction feature remains mock-tested upstream (no real API key wired), same as upstream; see the honest-limitations note in this fork's docs.
+
 <div align="center">
 
   <h1>Job Tracker App</h1>
@@ -7,8 +10,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/nadavramon/job-tracker-app/actions"><img src="https://img.shields.io/github/actions/workflow/status/nadavramon/job-tracker-app/ci.yml?branch=main" alt="Build Status"></a>
-    <img src="https://img.shields.io/badge/Java-21-orange?logo=openjdk" alt="Java 21">
+      <img src="https://img.shields.io/badge/Java-21-orange?logo=openjdk" alt="Java 21">
     <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-4-brightgreen?logo=springboot" alt="Spring Boot 4"></a>
     <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js 16"></a>
     <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript" alt="TypeScript">
