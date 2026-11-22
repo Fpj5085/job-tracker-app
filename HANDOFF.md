@@ -216,3 +216,46 @@
 
 ### Backlog（继承 A4）
 Recharts 雷达图、jieba-wasm 子串粒度分词、AI 抽取真实调用联调（待 Anthropic Key）、i18n 运行时切换按钮。
+
+---
+
+# A-GH1 — 发布整改收尾 + 审计报告（2026-11-22）
+
+> 本轮不创建 origin、不推送、不重写历史；审计报告全文见 **docs/RELEASE_AUDIT.md**（commit 94b6979）。
+
+## 整改闭环状态
+
+| # | 项 | 状态 |
+|---|---|---|
+| A-1 | 8 个曾跟踪日志隐私检查闭环 | ✅ 完成（结论：无真实凭据/Cookie/Token/求职隐私进入历史；两轮 12 模式全库扫描，详见审计报告 §2） |
+| A-2 | 测试复跑 | ✅ 后端 223 全绿（exit 0）/ 前端 build 385 全绿 + Compiled successfully（exit 0），均与 A4 基线一致 |
+| A-3 | MIT LICENSE 核对 | ✅ 上游 nadavramon 归属 + 2026 Feng Pinjun 二开归属两行齐备，MIT 正文完整 |
+| A-4 | 专业化 | ✅ README：Key Features +4 fork 功能、API Reference +6 fork 端点、Roadmap 勾选、新增 Known Limitations 与 AI-Agent Collaboration Statement 两节；CI 零密钥方案确认沿用既有 .github/workflows/ci.yml（services postgres + npm ci/lint/test/build + ci-gate，无任何真实 Key） |
+| A-5 | 等待批准建公开仓库 | ⏳ 审计报告即 GO/NO-GO 依据 |
+
+## 日志历史扫描结论（摘要）
+
+- **无真实凭据/Cookie/Token/求职隐私进入 git 历史。** 全部命中均为虚构测试值、明示为演示的合成账号、或本机路径（Windows 用户名 28953 泄露 2 处，风险极低）。
+- **如实披露（唯一需裁决项）**：A5 本地演示密钥字面量（jtdemo-local-2026 / a5-local-jwt-secret-key-32-characters!）在 7818ffd、22a8bea 两个提交的 ps1 diff 中可检出（`git log -S` 可复现）。三者均仅用于一次性 127.0.0.1 本地演示环境，公开后不构成可利用凭据。处置三方案（甲 squash 干净快照发布/乙书面接受低风险/丙 filter-repo 改写）已写入审计报告，**未擅自执行**，等总控+发起方批准。
+
+## 测试真实结果（2026-11-22）
+
+- backend `mvnw -B test`：exit 0，Tests run: 223, Failures: 0, Errors: 0, Skipped: 1，BUILD SUCCESS（Mockito self-attach 警告如实记录，不影响结果）
+- frontend `npm run build`：exit 0，Compiled successfully in 12.2s，BUILD_ID 生成（去 Google Fonts 改动保留：fonts.googleapis.com 当前网络不可达，字体变量已别名到系统字体栈，HANDOFF 有据）
+- frontend `npm test`：exit 0，Test Suites: 43 passed, Tests: 385 passed
+
+## 改动取舍（A5-R 指令执行记录）
+
+- **回滚**：backend/Dockerfile（daocloud 基镜像）、frontend/Dockerfile（musl vendored 实验）、frontend/.dockerignore（白名单）、frontend/docker-native/lightningcss tgz——均为容器构建实验，与本地栈无关，已 git checkout 还原。
+  - **保留说明**：fonts.googleapis.com 在当前网络不可达（curl 直连 000，-k 亦仅 200 于特定参数），去 Google Fonts 的 layout.tsx/globals.css 改动**保留**并在 README Known Limitations 披露——这是 host/容器构建在受限网络下的实际依赖项，非纯实验。
+  - git 历史中相应实验提交仍在（未重写），回滚只作用于工作区最终态。
+
+## 提交清单
+
+- 94b6979 A-GH1: release audit report (log-history privacy scan, test evidence, LICENSE check, README professionalization)
+- （前序）22a8bea A6、7818ffd A5、a67a60c A4 等，见 git log。
+
+## GO / NO-GO
+
+**GO（有条件）**——条件 ①：历史含本地演示密钥字面量两处 diff（低风险，建议 squash 发布或书面接受）；条件 ②：构建日志含本机用户名路径 2 处（披露即可）。均无真实凭据/隐私，**无 NO-GO 项**。
+**阻塞项**：无（a5-demo.mp4 录屏因 gdigrab 全屏隐私风险按总控通报改分步截图交付并被 A5 验收；本轮不涉及）。
